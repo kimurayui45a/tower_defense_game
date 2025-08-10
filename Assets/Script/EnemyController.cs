@@ -25,12 +25,16 @@ public class EnemyController : MonoBehaviour
     // Animator コンポーネントの取得用
     private Animator anim;
 
+    private GameManager gameManager;
+
     public int attackPower;
 
     /// 敵の設定
     /// </summary>
-    public void SetUpEnemyController(Vector3[] pathsData)
+    public void SetUpEnemyController(Vector3[] pathsData, GameManager gameManager)
     {
+
+        this.gameManager = gameManager;
 
         hp = maxHp;
 
@@ -119,6 +123,10 @@ public class EnemyController : MonoBehaviour
 
         // TODO 破壊時のエフェクトの生成や関連する処理
 
+
+        // 敵を破壊した数をカウントアップする
+        // さらにこのメソッド内で、敵の情報を管理している List からこの敵の情報を削除もしてもらうために、EnemyController の情報を引数で渡している
+        gameManager.CountUpDestoryEnemyCount(this);
 
         // 敵キャラの破壊
         Destroy(gameObject);

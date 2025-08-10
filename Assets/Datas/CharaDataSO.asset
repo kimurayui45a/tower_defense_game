@@ -22,6 +22,7 @@ MonoBehaviour:
     intervalAttackTime: 120
     maxAttackCount: 3
     discription: "\u6B74\u6226\u306E\u9B54\u8853\u5E2B\u3002\u30B3\u30B9\u30C8\u304C\u5B89\u304F\u3001\u653B\u6483\u56DE\u6570\u304C\u591A\u3044\u3002"
+    charaAnim: {fileID: 7400000, guid: 96cb7f1b3d20eb74c8aeb609be2d28cf, type: 2}
   - charaName: Billy
     charaNo: 1
     cost: 200
@@ -31,6 +32,7 @@ MonoBehaviour:
     intervalAttackTime: 200
     maxAttackCount: 2
     discription: "\u653B\u6483\u7BC4\u56F2\u306F\u72ED\u304F\u3001\u653B\u6483\u56DE\u6570\u3082\u5C11\u306A\u3044\u304C\u3001\u653B\u6483\u529B\u304C\u666E\u901A\u3002"
+    charaAnim: {fileID: 7400000, guid: 740adccc20749f54384ca8d681cc692b, type: 2}
   - charaName: Call
     charaNo: 2
     cost: 300
@@ -40,6 +42,7 @@ MonoBehaviour:
     intervalAttackTime: 150
     maxAttackCount: 3
     discription: "\u653B\u6483\u7BC4\u56F2\u304C\u5E83\u304F\u3001\u653B\u6483\u56DE\u6570\u3082\u591A\u3044\u304C\u3001\u30B3\u30B9\u30C8\u304C\u9AD8\u3044\u3002"
+    charaAnim: {fileID: 7400000, guid: adacdf9bd0ee1d743af6f3cfc9e61c53, type: 2}
   - charaName: Devin
     charaNo: 3
     cost: 120
@@ -49,6 +52,7 @@ MonoBehaviour:
     intervalAttackTime: 30
     maxAttackCount: 2
     discription: "\u653B\u6483\u529B\u304C\u9AD8\u3044\u3002"
+    charaAnim: {fileID: 7400000, guid: 0be49028bdbdd6343abda588a00bb685, type: 2}
   - charaName: Elen
     charaNo: 4
     cost: 150
@@ -58,3 +62,4 @@ MonoBehaviour:
     intervalAttackTime: 100
     maxAttackCount: 6
     discription: "\u5C11\u3057\u5F37\u3081\u3002"
+    charaAnim: {fileID: 7400000, guid: c90946c97b30fb842bb3080c64bc5fdf, type: 2}

@@ -34,6 +34,19 @@ public class GameManager : MonoBehaviour
     // 上記の GameState の列挙子が１つだけ代入されるので、他の GameState と競合しない
     public GameState currentGameState;
 
+    // 敵の情報を一元化して管理するための変数。EnemyController 型で扱う
+    [SerializeField]
+    private List<EnemyController> enemiesList = new List<EnemyController>();
+
+    // 敵を破壊した数のカウント用
+    private int destroyEnemyCount;
+
+    public UIManager uiManager;
+
+    // 配置したキャラの情報を一元化して管理するための変数
+    [SerializeField]
+    private List<CharaController> charasList = new List<CharaController>();
+
     void Start()
     {
 
@@ -62,17 +75,18 @@ public class GameManager : MonoBehaviour
         // 敵の生成準備開始
         StartCoroutine(enemyGenerator.PreparateEnemyGenerate(this));
 
-        // TODO カレンシーの自動獲得処理の開始
+        // カレンシーの自動獲得処理の開始
+        StartCoroutine(TimeToCurrency());
     }
 
     /// <summary>
     /// 敵の情報を List に追加
     /// </summary>
-    public void AddEnemyList()
-    { 
-        //　TODO　敵の情報を List に追加する際に、引数を追加
-
-        //　TODO　敵の情報を List に追加
+    /// <param name="enemy"></param>
+    public void AddEnemyList(EnemyController enemy)
+    {
+        // 敵の情報を List に追加
+        enemiesList.Add(enemy);
 
         // 敵の生成数をカウントアップ
         generateEnemyCount++;
@@ -96,6 +110,130 @@ public class GameManager : MonoBehaviour
     public void SetGameState(GameState nextGameState)
     {
         currentGameState = nextGameState;
+    }
+
+    /// <summary>
+    /// すべての敵の移動を一時停止
+    /// </summary>
+    public void PauseEnemies()
+    {
+        for (int i = 0; i < enemiesList.Count; i++)
+        {
+            enemiesList[i].PauseMove();
+        }
+    }
+
+    /// <summary>
+    /// すべての敵の移動を再開
+    /// </summary>
+    public void ResumeEnemies()
+    {
+        for (int i = 0; i < enemiesList.Count; i++)
+        {
+            enemiesList[i].ResumeMove();
+        }
+    }
+
+    /// <summary>
+    /// 敵の情報を List から削除
+    /// </summary>
+    /// <param name="removeEnemy"></param>
+    public void RemoveEnemyList(EnemyController removeEnemy)
+    {
+        enemiesList.Remove(removeEnemy);
+    }
+
+    /// <summary>
+    /// 破壊した敵の数をカウント(このメソッドを外部のクラスから実行してもらう)
+    /// </summary>
+    public void CountUpDestoryEnemyCount(EnemyController enemyController)
+    {
+
+        // List から破壊された敵の情報を削除
+        RemoveEnemyList(enemyController);
+
+        // 敵を破壊した数を加算
+        destroyEnemyCount++;
+
+        Debug.Log("破壊した敵の数 : " + destroyEnemyCount);
+
+        // ゲームクリア判定
+        JudgeGameClear();
+    }
+
+
+    /// <summary>
+    /// ゲームクリア判定
+    /// </summary>
+    public void JudgeGameClear()
+    {
+        // 生成数を超えているか
+        if (destroyEnemyCount >= maxEnemyCount)
+        {
+
+            Debug.Log("ゲームクリア");
+
+
+            // TODO ゲームクリアの処理を追加
+
+        }
+    }
+
+    /// <summary>
+    /// 時間の経過に応じてカレンシーを加算
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerator TimeToCurrency()
+    {
+
+        int timer = 0;
+
+        // ゲームプレイ中のみ加算
+        while (currentGameState == GameState.Play)
+        {
+            timer++;
+
+            // 規定の時間が経過し、カレンシーが最大値でなければ
+            if (timer > GameData.instance.currencyIntervalTime && GameData.instance.currency < GameData.instance.maxCurrency)
+            {
+                timer = 0;
+
+                // 最大値以下になるようにカレンシーを加算
+                GameData.instance.currency = Mathf.Clamp(GameData.instance.currency += GameData.instance.addCurrencyPoint, 0, GameData.instance.maxCurrency);
+
+                // カレンシーの画面表示を更新
+                uiManager.UpdateDisplayCurrency();
+            }
+
+            yield return null;
+        }
+    }
+
+    /// <summary>
+    /// 選択したキャラの情報を List に追加
+    /// </summary>
+    public void AddCharasList(CharaController chara)
+    {
+        charasList.Add(chara);
+    }
+
+    /// <summary>
+    /// 選択したキャラを破棄し、情報を List から削除
+    /// </summary>
+    /// <param name="chara"></param>
+    public void RemoveCharasList(CharaController chara)
+    {
+        Destroy(chara.gameObject);
+        charasList.Remove(chara);
+    }
+
+    /// <summary>
+    /// 現在の配置しているキャラの数の取得
+    /// </summary>
+    /// <returns></returns>
+    public int GetPlacementCharaCount()
+    {
+        return charasList.Count;
     }
 
 }

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using DG.Tweening.Core.Easing;
 
 public class EnemyGenerator : MonoBehaviour
 {
@@ -33,24 +34,27 @@ public class EnemyGenerator : MonoBehaviour
         while (gameManager.isEnemyGenerate)
         {
 
-            // タイマーを加算
-            timer++;
-
-            // タイマーの値が敵の生成待機時間を超えたら
-            if (timer > gameManager.generateIntervalTime)
+            if (this.gameManager.currentGameState == GameManager.GameState.Play)
             {
 
-                // 次の生成のためにタイマーをリセット
-                timer = 0;
+                // タイマーを加算
+                timer++;
 
-                // 敵の生成
-                GenerateEnemy();
+                // タイマーの値が敵の生成待機時間を超えたら
+                if (timer > gameManager.generateIntervalTime)
+                {
 
-                // 敵の生成数のカウントアップと List への追加
-                gameManager.AddEnemyList();
+                    // 次の生成のためにタイマーをリセット
+                    timer = 0;
 
-                // 最大生成数を超えたら生成停止
-                gameManager.JudgeGenerateEnemysEnd();
+                    //GenerateEnemy();
+
+                    // 敵の生成し、敵の生成数のカウントアップと List への追加
+                    gameManager.AddEnemyList(GenerateEnemy());
+
+                    // 最大生成数を超えたら生成停止
+                    gameManager.JudgeGenerateEnemysEnd();
+                }
             }
 
             // 1フレーム中断
@@ -64,7 +68,9 @@ public class EnemyGenerator : MonoBehaviour
     /// <summary>
     /// 敵の生成
     /// </summary>
-    public void GenerateEnemy()
+    /// <param name="generateNo"></param>
+    /// <returns></returns>
+    public EnemyController GenerateEnemy(int generateNo = 0)
     {
 
         // ランダムな値を配列の最大要素数内で取得
@@ -76,15 +82,17 @@ public class EnemyGenerator : MonoBehaviour
         // 移動する地点を取得(<=　いままでEnemyController スクリプト内で行っていた処理をこちらに移動します)
         Vector3[] paths = pathDatas[randomValue].pathTranArray.Select(x => x.position).ToArray();
 
-        // 敵キャラの初期設定を行い、移動を一時停止しておく
-        enemyController.SetUpEnemyController(paths);
+        // 敵の情報の設定
+        enemyController.SetUpEnemyController(paths, gameManager);
 
         // 敵の移動経路のライン表示を生成の準備
-        //StartCoroutine(PreparateCreatePathLine(paths, enemyController));
+        StartCoroutine(PreparateCreatePathLine(paths));
 
-        StartCoroutine(CreatePathLine(paths));
+        //StartCoroutine(CreatePathLine(paths));
 
         enemyController.ResumeMove();
+
+        return enemyController;
 
     }
 
@@ -93,15 +101,18 @@ public class EnemyGenerator : MonoBehaviour
     /// </summary>
     /// <param name="paths"></param>
     /// <returns></returns>
-    //private IEnumerator PreparateCreatePathLine(Vector3[] paths, EnemyController enemyController)
-    //{
+    private IEnumerator PreparateCreatePathLine(Vector3[] paths)
+    {
 
-    //    // ラインの生成と削除。この処理が終了するまでは、この処理より下の処理は実行されない
-    //    yield return StartCoroutine(CreatePathLine(paths));
+        // ラインの生成と削除。この処理が終了するまでは、この処理より下の処理は実行されない
+        yield return StartCoroutine(CreatePathLine(paths));
 
-    //    // 敵の移動を再開
-    //    enemyController.ResumeMove();
-    //}
+        // 現在のゲームのステートが Play になるまで処理を一時中断する = Play になるまで、敵の移動を停止したままにする
+        yield return new WaitUntil(() => gameManager.currentGameState == GameManager.GameState.Play);
+
+        // 敵の移動を再開
+        //enemyController.ResumeMove();
+    }
 
     /// <summary>
     /// 移動経路用のラインの生成と破棄

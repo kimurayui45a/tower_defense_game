@@ -117,8 +117,8 @@ public class PlacementCharaSelectPopUp : MonoBehaviour
     public void ShowPopUp()
     {
 
-        // TODO 各キャラのボタンの制御
-
+        // 各キャラのボタンの制御
+        CheckAllCharaButtons();
 
         // ポップアップの表示
         canvasGroup.DOFade(1.0f, 0.5f);
@@ -130,8 +130,11 @@ public class PlacementCharaSelectPopUp : MonoBehaviour
     private void OnClickSubmitChooseChara()
     {
 
-        // TODO コストの支払いが可能か最終確認
-
+        // コストの支払いが可能か最終確認
+        if (chooseCharaData.cost > GameData.instance.currency)
+        {
+            return;
+        }
 
         // 選択しているキャラの生成
         charaGenerator.CreateChooseChara(chooseCharaData);
@@ -157,8 +160,8 @@ public class PlacementCharaSelectPopUp : MonoBehaviour
     private void HidePopUp()
     {
 
-        // TODO 各キャラのボタンの制御
-
+        // 各キャラのボタンの制御
+        CheckAllCharaButtons();
 
         // ポップアップの非表示
         canvasGroup.DOFade(0, 0.5f).OnComplete(() => charaGenerator.InactivatePlacementCharaSelectPopUp());  // 次の手順でメソッドを追加するので、それまでコメントアウトしておいてください。
@@ -170,21 +173,6 @@ public class PlacementCharaSelectPopUp : MonoBehaviour
     /// <param name="charaData"></param>
     public void SetSelectCharaDetail(CharaData charaData)
     {
-        if (charaData == null)
-        {
-            Debug.LogError("[SetSelectCharaDetail] charaData is NULL", this);
-            return;
-        }
-
-        Debug.Log(
-            $"[SetSelectCharaDetail] " +
-            $"name:{charaData.charaName}, no:{charaData.charaNo}, cost:{charaData.cost}, " +
-            $"atk:{charaData.attackPower}, range:{charaData.attackRange}, " +
-            $"interval:{charaData.intervalAttackTime:0.00}s, max:{charaData.maxAttackCount}, " +
-            $"sprite:{(charaData.charaSprite != null ? charaData.charaSprite.name : "null")}",
-            this
-        );
-
 
         chooseCharaData = charaData;
 
@@ -201,6 +189,24 @@ public class PlacementCharaSelectPopUp : MonoBehaviour
 
         txtPickupCharaMAxAttackCount.text = charaData.maxAttackCount.ToString();
 
+    }
+
+    /// <summary>
+    /// コストが支払えるかどうかを 各 SelectCharaDetail で確認してボタン押下機能を切り替え
+    /// </summary>
+    private void CheckAllCharaButtons()
+    {
+
+        // 配置できるキャラがいる場合のみ処理を行う
+        if (selectCharaDetailsList.Count > 0)
+        {
+
+            // 各キャラのコストとカレンシーを確認して、配置できるかどうかを判定してボタンの押下有無を設定
+            for (int i = 0; i < selectCharaDetailsList.Count; i++)
+            {
+                selectCharaDetailsList[i].ChangeActivateButton(selectCharaDetailsList[i].JudgePermissionCost(GameData.instance.currency));
+            }
+        }
     }
 
 }
