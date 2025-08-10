@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82115752f8496374391d4c1e06e49ab7, type: 3}
+  m_Name: CharaDataSO
+  m_EditorClassIdentifier: 
+  charaDatasList:
+  - charaName: Aria
+    charaNo: 0
+    cost: 100
+    charaSprite: {fileID: 545644758, guid: 1cbfc6dfa3276f54eaaa44190cfc1dec, type: 3}
+    attackPower: 1
+    attackRange: 0
+    intervalAttackTime: 120
+    maxAttackCount: 3
+    discription: "\u6B74\u6226\u306E\u9B54\u8853\u5E2B\u3002\u30B3\u30B9\u30C8\u304C\u5B89\u304F\u3001\u653B\u6483\u56DE\u6570\u304C\u591A\u3044\u3002"
+  - charaName: Billy
+    charaNo: 1
+    cost: 200
+    charaSprite: {fileID: 1248525323487703161, guid: a7e64e4b46743b54299266992782f9a7, type: 3}
+    attackPower: 2
+    attackRange: 0
+    intervalAttackTime: 200
+    maxAttackCount: 2
+    discription: "\u653B\u6483\u7BC4\u56F2\u306F\u72ED\u304F\u3001\u653B\u6483\u56DE\u6570\u3082\u5C11\u306A\u3044\u304C\u3001\u653B\u6483\u529B\u304C\u666E\u901A\u3002"
+  - charaName: Call
+    charaNo: 2
+    cost: 300
+    charaSprite: {fileID: 2684471460419224087, guid: e8846360ce2729c4da85693554c50f61, type: 3}
+    attackPower: 5
+    attackRange: 2
+    intervalAttackTime: 150
+    maxAttackCount: 3
+    discription: "\u653B\u6483\u7BC4\u56F2\u304C\u5E83\u304F\u3001\u653B\u6483\u56DE\u6570\u3082\u591A\u3044\u304C\u3001\u30B3\u30B9\u30C8\u304C\u9AD8\u3044\u3002"
+  - charaName: Devin
+    charaNo: 3
+    cost: 120
+    charaSprite: {fileID: 6533491254952227748, guid: b5db545026f234e43b76c4cf94e7e232, type: 3}
+    attackPower: 10
+    attackRange: 0
+    intervalAttackTime: 30
+    maxAttackCount: 2
+    discription: "\u653B\u6483\u529B\u304C\u9AD8\u3044\u3002"
+  - charaName: Elen
+    charaNo: 4
+    cost: 150
+    charaSprite: {fileID: 4814029082027783119, guid: 990d4e888e854be40ac626a91a58bf0d, type: 3}
+    attackPower: 3
+    attackRange: 0
+    intervalAttackTime: 100
+    maxAttackCount: 6
+    discription: "\u5C11\u3057\u5F37\u3081\u3002"

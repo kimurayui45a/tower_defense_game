@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using DG.Tweening;
 using System.Linq;
@@ -24,18 +25,27 @@ public class EnemyController : MonoBehaviour
     // Animator コンポーネントの取得用
     private Animator anim;
 
-    void Start()
+    public int attackPower;
+
+    /// 敵の設定
+    /// </summary>
+    public void SetUpEnemyController(Vector3[] pathsData)
     {
+
         hp = maxHp;
 
         // Animator コンポーネントを取得して anim 変数に代入
         TryGetComponent(out anim);
 
         // 移動する地点を取得
-        paths = pathData.pathTranArray.Select(x => x.position).ToArray();
+        paths = pathsData;
 
         // 各地点に向けて移動、今後この処理を制御するため、Tween 型の変数に DOPath メソッドの処理を代入しておく
-        transform.DOPath(paths, 1000 / moveSpeed).SetEase(Ease.Linear).OnWaypointChange(ChangeAnimeDirection);
+        tween = transform.DOPath(paths, 1000 / moveSpeed).SetEase(Ease.Linear).OnWaypointChange(ChangeAnimeDirection);
+
+        // 移動を一時停止
+        PauseMove();
+
     }
 
     /// <summary>
@@ -54,10 +64,10 @@ public class EnemyController : MonoBehaviour
 
         //[手順13になったらこっちを使うこと]
         // 目標の位置と現在の位置との距離と方向を取得し、正規化処理を行い、単位ベクトルとする(方向の情報は持ちつつ、距離による速度差をなくして一定値にする)
-        //Vector3 direction = (transform.position - paths[index]).normalized;
+        Vector3 direction = (transform.position - paths[index]).normalized;
 
         // キャラの移動の方向と移動アニメの向きが反対になる場合の対処法
-        Vector3 direction = (paths[index] - transform.position).normalized;
+        //Vector3 direction = (paths[index] - transform.position).normalized;
 
 
         Debug.Log(direction);
@@ -90,8 +100,8 @@ public class EnemyController : MonoBehaviour
 
         // TODO 演出用のエフェクト生成
 
-
-        // TODO ヒットストップ演出
+        // ヒットストップ演出
+        StartCoroutine(WaitMove());
 
     }
 
@@ -114,4 +124,33 @@ public class EnemyController : MonoBehaviour
         Destroy(gameObject);
     }
 
+    /// <summary>
+    /// 移動を一時停止
+    /// </summary>
+    public void PauseMove()
+    {
+        tween.Pause();
+    }
+
+    /// <summary>
+    /// 移動を開始
+    /// </summary>
+    public void ResumeMove()
+    {
+        tween.Play();
+    }
+
+    /// <summary>
+    /// ヒットストップ演出
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator WaitMove()
+    {
+
+        tween.timeScale = 0.05f;
+
+        yield return new WaitForSeconds(0.5f);
+
+        tween.timeScale = 1.0f;
+    }
 }

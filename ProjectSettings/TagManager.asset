@@ -10,7 +10,7 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Chara
   - Water
   - UI
   - 
@@ -48,6 +48,9 @@ TagManager:
     locked: 0
   - name: Collision
     uniqueID: 308800657
+    locked: 0
+  - name: UI
+    uniqueID: 220646005
     locked: 0
   - name: Chara
     uniqueID: 1873305063
