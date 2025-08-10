@@ -42,7 +42,7 @@ public class CharaGenerator : MonoBehaviour
         // TODO 配置できる最大キャラ数に達している場合には配置できない
 
         // 画面をタップ(マウスクリック)
-        if (Input.GetMouseButtonDown(0) && !placementCharaSelectPopUp.gameObject.activeSelf)
+        if (Input.GetMouseButtonDown(0) && !placementCharaSelectPopUp.gameObject.activeSelf && gameManager.currentGameState == GameManager.GameState.Play)
         {
 
             // タップ(マウスクリック)の位置を取得してワールド座標に変換し、それをさらにタイルのセル座標に変換
