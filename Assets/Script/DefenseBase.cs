@@ -10,10 +10,31 @@ public class DefenseBase : MonoBehaviour
     // 耐久力の現在値
     private int defenseBaseDurability;
 
-    void Start()
+    private GameManager gameManager;
+
+    private UIManager uiManager;
+
+    /// <summary>
+    /// 設定
+    /// </summary>
+    /// <param name="gameManager"></param>
+    public void SetUpDefenseBase(GameManager gameManager, int defenseBaseDurability, UIManager uiManager)
     {
+
+        this.gameManager = gameManager;
+        this.uiManager = uiManager;
+
+        // 耐久力の最大値を決定する
+        // デバッグモードを適用している場合
+        if (GameData.instance.isDebug)
+        {
+
+            // GameData に設定している defenseBaseDurability を利用する
+            maxDefenseBaseDurability = GameData.instance.defenseBaseDurability;
+        }
+
         // 耐久力の初期値の設定
-        defenseBaseDurability = maxDefenseBaseDurability;
+        this.defenseBaseDurability = maxDefenseBaseDurability;
     }
 
 
@@ -31,13 +52,13 @@ public class DefenseBase : MonoBehaviour
             defenseBaseDurability = Mathf.Clamp(defenseBaseDurability - enemyController.attackPower, 0, maxDefenseBaseDurability);
 
             // TODO ダメージ演出生成
-
+            CreateDamageEffect();
 
             // TODO ゲーム画面に耐久力の表示がある場合、その表示を更新
 
 
             // 耐久力の残りを確認
-            if (defenseBaseDurability <= 0)
+            if (defenseBaseDurability <= 0 && gameManager.currentGameState == GameManager.GameState.Play)
             {
 
                 Debug.Log("Game Over");
@@ -51,6 +72,15 @@ public class DefenseBase : MonoBehaviour
         }
     }
 
-    // TODOダメージ演出生成用のメソッドの作成
+    /// <summary>
+    /// ダメージ演出生成
+    /// </summary>
+    private void CreateDamageEffect()
+    {
+
+        GameObject effect = Instantiate(BattleEffectManager.instance.GetEffect(EffectType.Hit_DefenseBase), transform.position, Quaternion.identity);
+
+        Destroy(effect, 1.5f);
+    }
 
 }

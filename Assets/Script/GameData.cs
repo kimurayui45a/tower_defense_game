@@ -20,6 +20,14 @@ public class GameData : MonoBehaviour
 
     public int maxCharaPlacementCount;
 
+    // true の場合、デバッグモードとする
+    [Header("デバッグモードの切り替え")]
+    public bool isDebug;
+
+    public int defenseBaseDurability;
+
+    public int stageNo;
+
     void Awake()
     {
         if (instance == null)

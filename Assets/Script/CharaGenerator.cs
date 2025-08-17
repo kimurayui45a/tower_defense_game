@@ -36,7 +36,6 @@ public class CharaGenerator : MonoBehaviour
     // タイルマップのタイルのセル座標の保持用
     private Vector3Int gridPos;
 
-
     void Update()
     {
 
@@ -72,17 +71,16 @@ public class CharaGenerator : MonoBehaviour
     /// </summary>
     /// <param name="gameManager"></param>
     /// <returns></returns>
-    public IEnumerator SetUpCharaGenerator(GameManager gameManager)
+    public IEnumerator SetUpCharaGenerator(GameManager gameManager, MapInfo currentMapInfo)
     {
 
         this.gameManager = gameManager;
 
-        // TODO ステージのデータを取得
-
+        // ステージのデータを取得
+        (tilemaps, grid) = currentMapInfo.GetMapInfo();
 
         // キャラのデータをリスト化
         CreateHaveCharaDatasList();
-
 
         // キャラ配置用のポップアップの生成
         yield return StartCoroutine(CreatePlacementCharaSelectPopUp());

@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 602f87612fc732146afa1ac6772f960c, type: 3}
+  m_Name: EnemyDataSO
+  m_EditorClassIdentifier: 
+  enemyDatasList:
+  - enemyName: Zill
+    enemyNo: 0
+    hp: 1
+    attackPower: 1
+    moveSpeed: 80
+    enemyType: 0
+    itemDropRate: 0
+    enemyOverrideController: {fileID: 22100000, guid: 8d18dfca3d2b6344ab3c9f7a117bc17d, type: 2}
+  - enemyName: Yan
+    enemyNo: 1
+    hp: 1
+    attackPower: 2
+    moveSpeed: 60
+    enemyType: 0
+    itemDropRate: 0
+    enemyOverrideController: {fileID: 22100000, guid: c9a2694939ce3ca419c73c31b11659eb, type: 2}
+  - enemyName: Winx
+    enemyNo: 2
+    hp: 2
+    attackPower: 1
+    moveSpeed: 40
+    enemyType: 2
+    itemDropRate: 0
+    enemyOverrideController: {fileID: 22100000, guid: de794ec701f062e4da3980888073e05f, type: 2}

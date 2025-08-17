@@ -18,12 +18,17 @@ public class EnemyGenerator : MonoBehaviour
 
     private GameManager gameManager;
 
+    private StageData stageData;
+
+
     /// <summary>
     /// 敵の生成準備
     /// </summary>
     /// <returns></returns>
-    public IEnumerator PreparateEnemyGenerate(GameManager gameManager)
+    public IEnumerator PreparateEnemyGenerate(GameManager gameManager, StageData stageData)
     {
+
+        this.stageData = stageData;
 
         this.gameManager = gameManager;
 
@@ -73,22 +78,48 @@ public class EnemyGenerator : MonoBehaviour
     public EnemyController GenerateEnemy(int generateNo = 0)
     {
 
-        // ランダムな値を配列の最大要素数内で取得
-        int randomValue = Random.Range(0, pathDatas.Length);
+        //// ランダムな値を配列の最大要素数内で取得
+        //int randomValue = Random.Range(0, pathDatas.Length);
 
-        // プレファブからエネミーのクローンを指定した位置に敵を生成
-        EnemyController enemyController = Instantiate(enemyControllerPrefab, pathDatas[randomValue].generateTran.position, Quaternion.identity);
+        //// プレファブからエネミーのクローンを指定した位置に敵を生成
+        //EnemyController enemyController = Instantiate(enemyControllerPrefab, pathDatas[randomValue].generateTran.position, Quaternion.identity);
 
-        // 移動する地点を取得(<=　いままでEnemyController スクリプト内で行っていた処理をこちらに移動します)
-        Vector3[] paths = pathDatas[randomValue].pathTranArray.Select(x => x.position).ToArray();
+        //// 移動する地点を取得(<=　いままでEnemyController スクリプト内で行っていた処理をこちらに移動します)
+        //Vector3[] paths = pathDatas[randomValue].pathTranArray.Select(x => x.position).ToArray();
+
+        //// 敵の種類をランダムに決定
+        //int enemyNo = Random.Range(0, DataBaseManager.instance.enemyDataSO.enemyDatasList.Count);
+
+
+        // 生成位置(基本的には Element の番号と同じ。-1 の場合はランダム)
+        int posNo = generateNo;
+
+        // 生成位置がランダムか確認
+        if (stageData.mapInfo.appearEnemyInfos[generateNo].isRandomPos)
+        {
+            posNo = Random.Range(0, stageData.mapInfo.appearEnemyInfos.Length);
+        }
+
+        // 敵の生成
+        EnemyController enemyController = Instantiate(enemyControllerPrefab, stageData.mapInfo.appearEnemyInfos[posNo].enemyPathData.generateTran.position, Quaternion.identity);
+
+        // 敵の種類
+        int enemyNo = stageData.mapInfo.appearEnemyInfos[generateNo].enemyNo;
+
+        // 敵がランダムか確認
+        if (stageData.mapInfo.appearEnemyInfos[generateNo].enemyNo == -1)
+        {
+            enemyNo = Random.Range(0, DataBaseManager.instance.enemyDataSO.enemyDatasList.Count);
+        }
+
+        // 経路の作成
+        Vector3[] paths = stageData.mapInfo.appearEnemyInfos[posNo].enemyPathData.pathTranArray.Select(x => x.position).ToArray();
 
         // 敵の情報の設定
-        enemyController.SetUpEnemyController(paths, gameManager);
+        enemyController.SetUpEnemyController(paths, gameManager, DataBaseManager.instance.enemyDataSO.enemyDatasList[enemyNo]);
 
         // 敵の移動経路のライン表示を生成の準備
         StartCoroutine(PreparateCreatePathLine(paths));
-
-        //StartCoroutine(CreatePathLine(paths));
 
         enemyController.ResumeMove();
 
@@ -147,6 +178,17 @@ public class EnemyGenerator : MonoBehaviour
 
             yield return new WaitForSeconds(0.1f);
         }
+    }
+
+    /// <summary>
+    /// ステージに応じた PathDatas をセット
+    /// </summary>
+    public void SetUpPathDatas(PathData[] pathDatas)
+    {
+
+        // 初期化して代入
+        this.pathDatas = new PathData[pathDatas.Length];
+        this.pathDatas = pathDatas;
     }
 
 }

@@ -47,6 +47,23 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private List<CharaController> charasList = new List<CharaController>();
 
+    // 生成した防衛拠点の情報を代入するための変数
+    [SerializeField]
+    private DefenseBase defenseBase;
+
+    // デバッグのために SerializeField 属性を利用してインスペクターで確認できるようにしている
+    // 生成したステージのゲームオブジェクト(MapInfo クラスのアタッチされている MainMap ゲームオブジェクト)を代入するための変数
+    [SerializeField]
+    private MapInfo currentMapInfo;
+
+    // 防衛拠点のプレファブをアサインするための変数
+    [SerializeField]
+    private DefenseBase defenseBasePrefab;
+
+    // 今回のバトルで使用するステージのデータ情報
+    [SerializeField]
+    private StageData currentStageData;
+
     void Start()
     {
 
@@ -56,14 +73,14 @@ public class GameManager : MonoBehaviour
 
         // TODO ゲームデータを初期化
 
-
-        // TODO ステージの設定 + ステージごとの PathData を設定
+        // ステージの設定 + ステージごとの PathData を設定(ここで MapInfo が確定されている)
+        SetUpStageData();
 
         // キャラ配置用ポップアップの生成と設定
-        StartCoroutine(charaGenerator.SetUpCharaGenerator(this));
+        StartCoroutine(charaGenerator.SetUpCharaGenerator(this, currentMapInfo));
 
         // TODO 拠点の設定
-
+        defenseBase.SetUpDefenseBase(this, currentStageData.defenseBaseDurability, uiManager);
 
         // TODO オープニング演出再生
 
@@ -73,7 +90,7 @@ public class GameManager : MonoBehaviour
         SetGameState(GameState.Play);
 
         // 敵の生成準備開始
-        StartCoroutine(enemyGenerator.PreparateEnemyGenerate(this));
+        StartCoroutine(enemyGenerator.PreparateEnemyGenerate(this, currentStageData));
 
         // カレンシーの自動獲得処理の開始
         StartCoroutine(TimeToCurrency());
@@ -236,4 +253,77 @@ public class GameManager : MonoBehaviour
         return charasList.Count;
     }
 
+    /// <summary>
+    /// 配置解除を選択するポップアップ作成の準備(CharaController から呼び出される)
+    /// </summary>
+    /// <param name="chara"></param>
+    public void PreparateCreateReturnCharaPopUp(CharaController chara)
+    {
+
+        // ゲームの進行状態をゲーム停止に変更
+        SetGameState(GameState.Stop);
+
+        // すべての敵の移動を一時停止
+        PauseEnemies();
+
+        // 配置解除を選択するポップアップを作成
+        uiManager.CreateReturnCharaPopUp(chara, this);
+    }
+
+    /// <summary>
+    /// 選択したキャラの配置解除の確認(ReturnSelectCharaPopUp から呼び出される)
+    /// </summary>
+    /// <param name="isReturnChara"></param>
+    /// <param name="chara"></param>
+    public void JudgeReturnChara(bool isReturnChara, CharaController chara)
+    {
+
+        // キャラの配置を解除する場合
+        if (isReturnChara)
+        {
+
+            // 選択したキャラを破棄し、情報を List から削除
+            RemoveCharasList(chara);
+        }
+
+        //  ゲームの進行状態をプレイ中に変更して、ゲーム再開
+        SetGameState(GameState.Play);
+
+        // すべての敵の移動を再開
+        ResumeEnemies();
+
+        // カレンシーの加算処理を再開
+        StartCoroutine(TimeToCurrency());
+    }
+
+    /// <summary>
+    /// ステージデータの設定
+    /// </summary>
+    private void SetUpStageData()
+    {
+
+        // GameData の stageNo から StageData を取得
+        currentStageData = DataBaseManager.instance.stageDataSO.stageDatasList[GameData.instance.stageNo];
+
+        // 各情報を StageData クラスを参照して設定
+        generateIntervalTime = currentStageData.generateIntervalTime;
+        maxEnemyCount = currentStageData.mapInfo.appearEnemyInfos.Length;
+
+        // ステージ用のマップと防衛拠点の生成
+        currentMapInfo = Instantiate(currentStageData.mapInfo);
+        defenseBase = Instantiate(defenseBasePrefab, currentMapInfo.GetDefenseBaseTran());
+
+        // PathDatas の移動経路情報を StageData クラスを参照して設定
+        PathData[] pathDatas = new PathData[currentStageData.mapInfo.appearEnemyInfos.Length];
+        for (int i = 0; i < currentStageData.mapInfo.appearEnemyInfos.Length; i++)
+        {
+            pathDatas[i] = currentStageData.mapInfo.appearEnemyInfos[i].enemyPathData;
+        }
+
+        // 移動経路の情報を引数で渡して、EnemyGenerator クラスの設定を行う
+        enemyGenerator.SetUpPathDatas(pathDatas);
+
+        // TODO 他にもあれば追加
+
+    }
 }

@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Zill_anime
+  m_Controller: {fileID: 9100000, guid: 43dc424ced0aa1e4caf24dda4a07e402, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: bfaf79bff18c5644594883ce0949873e, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: bfaf79bff18c5644594883ce0949873e, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 5818ef3b2c096014ebb3fb717d69a809, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 5818ef3b2c096014ebb3fb717d69a809, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 7f3b147cf316ada47b9fe794bb775181, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 7f3b147cf316ada47b9fe794bb775181, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: a8666db00ead854448f0b9afc5af8772, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: a8666db00ead854448f0b9afc5af8772, type: 2}

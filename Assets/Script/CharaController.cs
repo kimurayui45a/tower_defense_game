@@ -34,10 +34,9 @@ public class CharaController : MonoBehaviour
 
     private GameManager gameManager;
 
-    //private SpriteRenderer spriteRenderer;
-
     private Animator anim;
 
+    //代入する文字列は自分のプロジェクトの Animationビュー の Motion に登録されている AnimationClip の名前を登録する
     private string overrideClipName = "Chara_0";
 
     private AnimatorOverrideController overrideController;
@@ -109,14 +108,13 @@ public class CharaController : MonoBehaviour
                     {
 
                         // キャラ破壊
-                        Destroy(gameObject);
+                        DestroyChara();
+                        //Destroy(gameObject);
 
-
-                        ////*  処理を追加  *////
 
 
                         // キャラのリストから情報を削除
-                        gameManager.RemoveCharasList(this);
+                        //gameManager.RemoveCharasList(this);
 
                     }
 
@@ -255,5 +253,29 @@ public class CharaController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// キャラをタップした際の処理(EventTrigger に登録するメソッド)
+    /// </summary>
+    public void OnClickChara()
+    {
+
+        // GameManager を経由して、ゲームの進行状態を切り替えつつ、UIManager へ処理をつなげてもらうためのメソッド
+        gameManager.PreparateCreateReturnCharaPopUp(this);
+    }
+
+    /// <summary>
+    /// キャラが破壊された場合の処理
+    /// </summary>
+    private void DestroyChara()
+    {
+
+        // エフェクト
+        GameObject effect = Instantiate(BattleEffectManager.instance.GetEffect(EffectType.Destroy_Chara), transform.position, Quaternion.identity);
+
+        // キャラ破壊
+        Destroy(gameObject);
+
+        gameManager.RemoveCharasList(this);
+    }
 
 }

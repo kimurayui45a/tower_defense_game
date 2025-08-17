@@ -29,17 +29,33 @@ public class EnemyController : MonoBehaviour
 
     public int attackPower;
 
+    public EnemyDataSO.EnemyData enemyData;
+
     /// 敵の設定
     /// </summary>
-    public void SetUpEnemyController(Vector3[] pathsData, GameManager gameManager)
+    public void SetUpEnemyController(Vector3[] pathsData, GameManager gameManager, EnemyDataSO.EnemyData enemyData)
     {
+
+        // 引数で届いた EnemyData の情報を代入して利用できる状態にする
+        this.enemyData = enemyData;
+
+        // 各数値を EnemyData の情報の値に書き換える
+        moveSpeed = this.enemyData.moveSpeed;
+
+        attackPower = this.enemyData.attackPower;
+
+        maxHp = this.enemyData.hp;
 
         this.gameManager = gameManager;
 
         hp = maxHp;
 
         // Animator コンポーネントを取得して anim 変数に代入
-        TryGetComponent(out anim);
+        if (TryGetComponent(out anim))
+        {
+            // Animator コンポーネントが取得できた場合には、アニメーションの設定が行えるか確認してからアニメーションの上書きをする
+            SetUpAnimation();
+        }
 
         // 移動する地点を取得
         paths = pathsData;
@@ -101,6 +117,16 @@ public class EnemyController : MonoBehaviour
             // 破壊処理を実行するメソッドを呼び出す
             DestroyEnemy();
         }
+        else
+        {
+
+            // 演出用のエフェクト生成
+            CreateHitEffect();
+
+            // ヒットストップ演出
+            StartCoroutine(WaitMove());
+
+        }
 
         // TODO 演出用のエフェクト生成
 
@@ -122,7 +148,8 @@ public class EnemyController : MonoBehaviour
 
 
         // TODO 破壊時のエフェクトの生成や関連する処理
-
+        GameObject effect = Instantiate(BattleEffectManager.instance.GetEffect(EffectType.Destroy_Enemy), transform.position, Quaternion.identity);
+        Destroy(effect, 1.5f);
 
         // 敵を破壊した数をカウントアップする
         // さらにこのメソッド内で、敵の情報を管理している List からこの敵の情報を削除もしてもらうために、EnemyController の情報を引数で渡している
@@ -161,4 +188,34 @@ public class EnemyController : MonoBehaviour
 
         tween.timeScale = 1.0f;
     }
+
+    /// <summary>
+    /// AnimatorController を AnimatorOverrideController を利用して変更
+    /// </summary>
+    private void SetUpAnimation()
+    {
+
+        // このエネミーの EnemyData 内にアニメーション用のデータがあるか確認する
+        if (enemyData.enemyOverrideController != null)
+        {
+
+            // アニメーションのデータがある場合には、アニメーションを上書きする
+            anim.runtimeAnimatorController = enemyData.enemyOverrideController;
+        }
+    }
+
+    /// <summary>
+    /// ヒットエフェクト生成
+    /// </summary>
+    private void CreateHitEffect()
+    {
+
+        // TODO SE
+
+        // 被ダメージ時のヒットエフェクト生成
+        GameObject effect = Instantiate(BattleEffectManager.instance.GetEffect(EffectType.Hit_Enemy), transform.position, Quaternion.identity);
+        // エフェクトを破壊
+        Destroy(effect, 1.5f);
+    }
+
 }
